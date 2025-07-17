@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptHub - El OS para Equipos de IA | Reduce el Riesgo de Despliegue de IA en 90%</title>
+    <meta name="description" content="PromptHub es la plataforma colaborativa para equipos de IA. Versiona, prueba y despliega funciones de IA confiables con la velocidad y confianza de un flujo de trabajo de software profesional.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f9fafb;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #4f46e5, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(79, 70, 229, 0.6);
+        }
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(79, 70, 229, 0.3);
+            transform: translateY(-4px);
+        }
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            background-color: #1f2937;
+            border-radius: 9999px;
+            padding: 4px;
+            border: 1px solid #374151;
+        }
+        .lang-toggle button {
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            transition: all 0.2s ease-in-out;
+            color: #9ca3af;
+        }
+        .lang-toggle button.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        /* Animación del Prototipo Mejorada */
+        .prototype-container {
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            height: 600px;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            position: relative;
+            color: #111827;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .prototype-screen {
+            position: absolute;
+            inset: 1rem;
+            opacity: 0;
+            animation: screenTransition 20s infinite;
+        }
+        .prototype-screen.screen-1 { animation-delay: 0s; }
+        .prototype-screen.screen-2 { animation-delay: 5s; }
+        .prototype-screen.screen-3 { animation-delay: 10s; }
+        .prototype-screen.screen-4 { animation-delay: 15s; }
+
+        @keyframes screenTransition {
+            0% { opacity: 0; transform: translateY(20px); }
+            5% { opacity: 1; transform: translateY(0); }
+            20% { opacity: 1; transform: translateY(0); }
+            25% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 0; }
+        }
+
+        .prototype-header { padding-bottom: 0.75rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .prototype-title { font-size: 1.125rem; font-weight: 700; color: #111827; }
+        .prototype-subtitle { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; }
+        .prototype-tabs { display: flex; gap: 1.5rem; border-bottom: 1px solid #e5e7eb; margin-top: 1rem; }
+        .prototype-tab { padding-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #6b7280; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .prototype-tab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
+        .prototype-content { margin-top: 1.5rem; height: 450px; }
+        .collaboration-avatars { display: flex; margin-left: auto; }
+        .collaboration-avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; margin-left: -8px; }
+        .collaboration-avatar:first-child { margin-left: 0; }
+        .editor-area { background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; height: 100%; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .prompt-variable { display: inline-block; background-color: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 9999px; font-weight: 500; font-size: 0.875rem; border: 1px solid #c7d2fe; }
+        .typing-cursor { display: inline-block; width: 2px; height: 1em; background-color: #4f46e5; animation: blink 1s infinite steps(1, start); }
+        @keyframes blink { 50% { opacity: 0; } }
+        .playground-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; height: 100%; }
+        .config-panel, .output-panel { background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .output-panel { background: #1f2937; color: #e5e7eb; }
+        .variable-input { width: 100%; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem; margin-top: 0.5rem; font-size: 0.875rem; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .metric-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 0.5rem; padding: 1rem; text-align: center; }
+        .metric-value { font-size: 1.5rem; font-weight: 700; }
+        .metric-label { font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem; }
+        .team-activity { background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; }
+        .activity-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-avatar { width: 24px; height: 24px; border-radius: 50%; }
+        .deployment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; height: 100%; }
+        .environment-panel, .integrations-panel { background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .environment-status { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .integration-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f9fafb; border-radius: 0.375rem; margin-bottom: 0.5rem; }
+        .integration-icon { width: 20px; height: 20px; background: #4f46e5; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.625rem; font-weight: 700; margin-right: 0.75rem; }
+        .status-badge { background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600; }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(to right, #4f46e5, #a855f7); border-radius: 2px; animation: progressAnimation 20s infinite; }
+        @keyframes progressAnimation { 0% { width: 0%; } 25% { width: 25%; } 50% { width: 50%; } 75% { width: 75%; } 100% { width: 100%; } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-lg border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-indigo-600 flex items-center justify-center rounded-lg text-white font-bold text-lg">P</div>
+                <span class="font-bold text-xl text-white">PromptHub</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="lang-toggle">
+                    <button id="lang-en" class="active">EN</button>
+                    <button id="lang-es">ES</button>
+                </div>
+                <a href="#waitlist" id="header-cta-btn" class="cta-button bg-indigo-600 text-white font-semibold py-2 px-5 rounded-lg text-sm hidden md:inline-block">
+                    Join Free Beta
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section Optimizado -->
+        <section class="pt-32 pb-20 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(79,70,229,0.3),rgba(255,255,255,0))]"></div>
+            <div class="container mx-auto px-6 relative">
+                <div id="hero-badge" class="bg-indigo-500/10 text-indigo-400 text-xs font-semibold px-3 py-1 rounded-full inline-block mb-4 border border-indigo-500/30">
+                    Active Private Beta
+                </div>
+                <h1 id="hero-title" class="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+                    Reduce AI Deployment Risk by <span class="gradient-text">90%</span><br>
+                    with Professional Prompt Management
+                </h1>
+                <p id="hero-subtitle" class="mt-6 max-w-2xl mx-auto text-lg text-gray-400">
+                    PromptHub is the collaborative OS for AI teams. Version, test, and deploy reliable AI features with the speed and confidence of a professional software workflow.
+                </p>
+                <div id="waitlist-form-hero" class="mt-8 max-w-md mx-auto">
+                    <form class="flex flex-col sm:flex-row gap-3">
+                        <input id="hero-email-input" type="email" required placeholder="you@company.com" class="flex-grow w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500">
+                        <button id="hero-submit-btn" type="submit" class="cta-button bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg">
+                            Get Free Beta Access
+                        </button>
+                    </form>
+                    <p id="hero-subtext" class="text-xs text-gray-500 mt-3">No credit card required. Join developers from top AI companies.</p>
+                </div>
+                 <div id="success-message-hero" class="hidden mt-8 max-w-md mx-auto bg-green-500/10 text-green-400 p-4 rounded-lg border border-green-500/30">
+                    <p id="success-title-hero" class="font-semibold">Perfect! You're on the list.</p>
+                    <p id="success-subtitle-hero" class="text-sm">We've sent you a welcome email. Check your inbox.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof Section -->
+        <section class="py-12">
+            <div class="container mx-auto px-6">
+                <p id="social-proof-title" class="text-center text-sm text-gray-500 font-semibold uppercase tracking-wider mb-8">
+                    Validated and discussed by the developer community
+                </p>
+                <div class="flex justify-center items-center gap-8 md:gap-12 mt-6 grayscale opacity-60">
+                    <p class="font-bold text-lg">Hacker News</p>
+                    <p class="font-bold text-lg">r/PromptEngineering</p>
+                    <p class="font-bold text-lg">Product Hunt</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem/Agitation Section -->
+        <section class="py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 id="problem-title" class="text-3xl md:text-4xl font-bold text-white">Your AI Workflow is <span class="text-red-500">Broken</span>.</h2>
+                <p id="problem-subtitle" class="mt-4 max-w-3xl mx-auto text-gray-400">Last week, a 'small tweak' from a PM broke your support chatbot. It took 3 hours to find the original prompt in a Google Doc, and another 2 to fix the damage. Your team lost $15K in support tickets.</p>
+                <div class="mt-12 grid md:grid-cols-3 gap-8 text-left">
+                    <div class="feature-card p-6 rounded-xl">
+                        <h3 id="pain1-title" class="font-bold text-lg text-white">Chaotic Prompts</h3>
+                        <p id="pain1-desc" class="mt-2 text-gray-400 text-sm">Prompts are scattered across 15 different Google Docs. There's no single source of truth. The result: inconsistent AI behavior that confuses users.</p>
+                    </div>
+                    <div class="feature-card p-6 rounded-xl">
+                        <h3 id="pain2-title" class="font-bold text-lg text-white">No Version Control</h3>
+                        <p id="pain2-desc" class="mt-2 text-gray-400 text-sm">A PM makes a 'small change' and breaks a key feature. Rolling back means manually searching through document history for hours in a panic.</p>
+                    </div>
+                    <div class="feature-card p-6 rounded-xl">
+                        <h3 id="pain3-title" class="font-bold text-lg text-white">Broken Collaboration</h3>
+                        <p id="pain3-desc" class="mt-2 text-gray-400 text-sm">Non-technical experts can't contribute safely. Developers become a bottleneck for every copy change, slowing down innovation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Section con Animación Mejorada -->
+        <section class="py-20 bg-gray-900/50">
+            <div class="container mx-auto px-6 text-center">
+                <h2 id="solution-title" class="text-3xl md:text-4xl font-bold text-white">The Single Source of Truth for Your AI.</h2>
+                <p id="solution-subtitle" class="mt-4 max-w-2xl mx-auto text-gray-400">PromptHub brings the discipline of software engineering to your AI development lifecycle. See how it works in real-time:</p>
+                <div class="mt-8 max-w-md mx-auto">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p id="progress-bar-label" class="text-xs text-gray-500 mt-2">Live workflow demonstration</p>
+                </div>
+                <div class="mt-12 max-w-5xl mx-auto">
+                    <div class="prototype-container">
+                        <!-- Screen 1: Edición Colaborativa -->
+                        <div class="prototype-screen screen-1">
+                            <div class="prototype-header">
+                                <div>
+                                    <h2 class="prototype-title anim-main-title">summarize_conversation.prompt</h2>
+                                    <p class="prototype-subtitle anim-main-subtitle">Manage, test, and version this prompt with your team</p>
+                                </div>
+                                <div class="collaboration-avatars">
+                                    <img class="collaboration-avatar" src="https://placehold.co/28x28/4F46E5/FFFFFF?text=EL" alt="Elena">
+                                    <img class="collaboration-avatar" src="https://placehold.co/28x28/10B981/FFFFFF?text=PM" alt="Marco">
+                                    <img class="collaboration-avatar" src="https://placehold.co/28x28/F59E0B/FFFFFF?text=RG" alt="Ricardo">
+                                </div>
+                            </div>
+                            <div class="prototype-tabs">
+                                <div class="prototype-tab active anim-tab-edit">Edit</div>
+                                <div class="prototype-tab anim-tab-playground">Playground</div>
+                                <div class="prototype-tab anim-tab-versions">Versions</div>
+                                <div class="prototype-tab anim-tab-analytics">Analytics</div>
+                            </div>
+                            <div class="prototype-content">
+                                <div class="editor-area">
+                                    <h3 class="font-semibold mb-4 text-gray-800 anim-editor-title">Prompt Content</h3>
+                                    <div class="text-base leading-relaxed text-gray-700">
+                                        <p class="anim-prompt-line1">You are an expert customer support assistant.</p>
+                                        <p class="mt-2 anim-prompt-line2">Analyze the conversation from <span class="prompt-variable">{{user_name}}</span> and generate a concise summary.</p>
+                                        <p class="mt-2 anim-prompt-line3">Format the output in JSON.<span class="typing-cursor"></span></p>
+                                    </div>
+                                    <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                                        <div class="flex items-center gap-2">
+                                            <img class="w-5 h-5 rounded-full" src="https://placehold.co/20x20/10B981/FFFFFF?text=PM" alt="Marco">
+                                            <span class="text-sm font-medium text-blue-800 anim-suggestion-author">Marco suggests:</span>
+                                        </div>
+                                        <p class="text-sm text-blue-700 mt-1 anim-suggestion-text">"Add length constraint to improve consistency"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Screen 2: Playground con Testing -->
+                        <div class="prototype-screen screen-2">
+                             <div class="prototype-header">
+                                <div>
+                                    <h2 class="prototype-title anim-main-title">summarize_conversation.prompt</h2>
+                                    <p class="prototype-subtitle anim-playground-subtitle">Testing changes in a safe environment</p>
+                                </div>
+                                <div class="collaboration-avatars">
+                                    <img class="collaboration-avatar" src="https://placehold.co/28x28/4F46E5/FFFFFF?text=EL" alt="Elena">
+                                    <img class="collaboration-avatar" src="https://placehold.co/28x28/10B981/FFFFFF?text=PM" alt="Marco">
+                                </div>
+                            </div>
+                            <div class="prototype-tabs">
+                                <div class="prototype-tab anim-tab-edit">Edit</div>
+                                <div class="prototype-tab active anim-tab-playground">Playground</div>
+                                <div class="prototype-tab anim-tab-versions">Versions</div>
+                                <div class="prototype-tab anim-tab-analytics">Analytics</div>
+                            </div>
+                            <div class="prototype-content">
+                                <div class="playground-grid">
+                                    <div class="config-panel">
+                                        <h3 class="font-semibold mb-4 text-gray-800 anim-playground-title">Configuration & Variables</h3>
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1 anim-model-label">Model</label>
+                                            <select class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3">
+                                                <option>GPT-4o</option>
+                                                <option selected>Claude 3 Opus</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1 anim-var-label">user_name:</label>
+                                            <input type="text" value="Elena" class="variable-input">
+                                        </div>
+                                        <button class="w-full mt-4 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg anim-run-btn">
+                                            ▶ Run Test
+                                        </button>
+                                    </div>
+                                    <div class="output-panel">
+                                        <h3 class="font-semibold mb-4 text-white anim-output-title">Model Output</h3>
+                                        <div class="font-mono text-sm">
+                                            <p>{<br>
+                                            &nbsp;&nbsp;"<span class="anim-json-key1">summary</span>": "<span class="anim-json-value1">Elena is satisfied...</span>",<br>
+                                            &nbsp;&nbsp;"<span class="anim-json-key2">sentiment</span>": "<span class="anim-json-value2">Positive</span>",<br>
+                                            &nbsp;&nbsp;"<span class="anim-json-key3">resolution_time</span>": "<span class="anim-json-value3">5 minutes</span>"<br>
+                                            }</p>
+                                        </div>
+                                        <div class="mt-4 text-xs text-gray-400 anim-output-meta">
+                                            ✅ Latency: 1.2s | Tokens: 45 | Cost: $0.004
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Screen 3: Analytics y Métricas -->
+                        <div class="prototype-screen screen-3">
+                            <div class="prototype-header">
+                                <div>
+                                    <h2 class="prototype-title anim-main-title">summarize_conversation.prompt</h2>
+                                    <p class="prototype-subtitle anim-analytics-subtitle">Real-time performance metrics</p>
+                                </div>
+                            </div>
+                            <div class="prototype-tabs">
+                                <div class="prototype-tab anim-tab-edit">Edit</div>
+                                <div class="prototype-tab anim-tab-playground">Playground</div>
+                                <div class="prototype-tab anim-tab-versions">Versions</div>
+                                <div class="prototype-tab active anim-tab-analytics">Analytics</div>
+                            </div>
+                            <div class="prototype-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value">98.2%</div>
+                                        <div class="metric-label anim-metric1-label">Success Rate</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">1.2s</div>
+                                        <div class="metric-label anim-metric2-label">Avg. Latency</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">2,847</div>
+                                        <div class="metric-label anim-metric3-label">Runs (7d)</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">$12.40</div>
+                                        <div class="metric-label anim-metric4-label">Cost (7d)</div>
+                                    </div>
+                                </div>
+                                <div class="team-activity">
+                                    <h3 class="font-semibold mb-3 text-gray-800 anim-activity-title">Team Activity</h3>
+                                    <div class="activity-item">
+                                        <img class="activity-avatar" src="https://placehold.co/24x24/10B981/FFFFFF?text=EL" alt="Elena">
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-gray-800 anim-activity1-desc">Elena optimized length constraint</div>
+                                            <div class="text-xs text-gray-500 anim-activity1-time">5 minutes ago</div>
+                                        </div>
+                                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">+4.5% success</span>
+                                    </div>
+                                    <div class="activity-item">
+                                        <img class="activity-avatar" src="https://placehold.co/24x24/4F46E5/FFFFFF?text=PM" alt="Marco">
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-gray-800 anim-activity2-desc">Marco ran 47 tests</div>
+                                            <div class="text-xs text-gray-500 anim-activity2-time">2 hours ago</div>
+                                        </div>
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Testing</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Screen 4: Despliegue y Gestión -->
+                        <div class="prototype-screen screen-4">
+                            <div class="prototype-header">
+                                <div>
+                                    <h2 class="prototype-title anim-main-title">summarize_conversation.prompt</h2>
+                                    <p class="prototype-subtitle anim-deploy-subtitle">Deployment and environment management</p>
+                                </div>
+                            </div>
+                            <div class="prototype-tabs">
+                                <div class="prototype-tab anim-tab-edit">Edit</div>
+                                <div class="prototype-tab anim-tab-playground">Playground</div>
+                                <div class="prototype-tab anim-tab-versions">Versions</div>
+                                <div class="prototype-tab active anim-tab-deployment">Deployment</div>
+                            </div>
+                            <div class="prototype-content">
+                                <div class="deployment-grid">
+                                    <div class="environment-panel">
+                                        <h3 class="font-semibold mb-4 text-gray-800 anim-env-title">Environment Status</h3>
+                                        <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="font-medium text-gray-800 anim-prod-title">Production</div>
+                                                    <div class="text-sm text-gray-600 anim-prod-desc">v3.2 - Deployed by Elena</div>
+                                                </div>
+                                                <div class="environment-status">
+                                                    ✓ <span class="anim-prod-status">Active</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="integrations-panel">
+                                        <h3 class="font-semibold mb-4 text-gray-800 anim-integ-title">Active Integrations</h3>
+                                        <div class="space-y-2">
+                                            <div class="integration-item">
+                                                <div class="flex items-center">
+                                                    <div class="integration-icon">API</div>
+                                                    <div class="text-sm font-medium">REST API</div>
+                                                </div>
+                                                <div class="status-badge anim-api-status">Active</div>
+                                            </div>
+                                            <div class="integration-item">
+                                                <div class="flex items-center">
+                                                    <div class="integration-icon">CI</div>
+                                                    <div class="text-sm font-medium">GitHub Actions</div>
+                                                </div>
+                                                <div class="status-badge anim-ci-status">Active</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="py-20 bg-gray-900/50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 id="how-title" class="text-3xl md:text-4xl font-bold text-white">Un Flujo de Trabajo que Simplemente Funciona.</h2>
+                     <p id="how-subtitle" class="mt-4 max-w-2xl mx-auto text-gray-400">Pasa de la idea a una IA lista para producción en tres simples pasos.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 md:gap-12">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-xl flex items-center justify-center mx-auto font-bold text-2xl border border-indigo-500/30">1</div>
+                        <h3 id="step1-title" class="mt-6 font-bold text-xl text-white">Organiza y Centraliza</h3>
+                        <p id="step1-desc" class="mt-2 text-gray-400">Reúne todos tus prompts en un espacio de trabajo colaborativo. Estrúcturalos por proyecto, añade documentación y despídete del caos.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-xl flex items-center justify-center mx-auto font-bold text-2xl border border-indigo-500/30">2</div>
+                        <h3 id="step2-title" class="mt-6 font-bold text-xl text-white">Colabora y Prueba</h3>
+                        <p id="step2-desc" class="mt-2 text-gray-400">Invita a todo tu equipo. Prueba prompts contra cualquier modelo en un playground seguro. Versiona cada cambio con disciplina tipo Git.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-xl flex items-center justify-center mx-auto font-bold text-2xl border border-indigo-500/30">3</div>
+                        <h3 id="step3-title" class="mt-6 font-bold text-xl text-white">Despliega con Confianza</h3>
+                        <p id="step3-desc" class="mt-2 text-gray-400">Intégralo con tu pipeline de CI/CD. Monitorea el rendimiento y revierte a una versión anterior al instante si algo sale mal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA Section Optimizado -->
+        <section id="waitlist" class="py-20">
+            <div class="container mx-auto px-6 text-center">
+                 <h2 id="final-cta-title" class="text-3xl md:text-4xl font-bold text-white">¿Listo para Arreglar tu Flujo de Trabajo de IA?</h2>
+                 <p id="final-cta-subtitle" class="mt-4 max-w-xl mx-auto text-gray-400">Únete a la beta privada y sé el primero en experimentar una forma sensata de construir con IA. Gratis para los primeros usuarios.</p>
+                 <div class="mt-8 grid md:grid-cols-3 gap-6 max-w-3xl mx-auto text-sm">
+                     <div class="flex items-center justify-center gap-2 text-green-400">
+                         <span id="benefit1-icon">✓</span>
+                         <span id="benefit1-text">Setup en 5 minutos</span>
+                     </div>
+                     <div class="flex items-center justify-center gap-2 text-green-400">
+                         <span id="benefit2-icon">✓</span>
+                         <span id="benefit2-text">Gratis durante la beta</span>
+                     </div>
+                     <div class="flex items-center justify-center gap-2 text-green-400">
+                         <span id="benefit3-icon">✓</span>
+                         <span id="benefit3-text">Soporte prioritario</span>
+                     </div>
+                 </div>
+                 <div id="waitlist-form-footer" class="mt-8 max-w-md mx-auto">
+                    <form class="flex flex-col sm:flex-row gap-3">
+                        <input id="footer-email-input" type="email" required placeholder="tu@empresa.com" class="flex-grow w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500">
+                        <button id="footer-submit-btn" type="submit" class="cta-button bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg">
+                            Obtener Acceso Anticipado
+                        </button>
+                    </form>
+                    <p id="footer-subtext" class="text-xs text-gray-500 mt-3">Sin tarjeta de crédito. Cancela cuando quieras.</p>
+                </div>
+                 <div id="success-message-footer" class="hidden mt-8 max-w-md mx-auto bg-green-500/10 text-green-400 p-4 rounded-lg border border-green-500/30">
+                    <p id="success-title-footer" class="font-semibold">¡Listo! Estás en la lista de espera.</p>
+                    <p id="success-subtitle-footer" class="text-sm">Te hemos añadido. Mantente atento a tu correo para recibir tu invitación.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-500">
+            <p id="footer-text">&copy; 2025 PromptHub. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const i18n = {
+                en: {
+                    headerCtaBtn: "Join Free Beta",
+                    heroBadge: "Active Private Beta",
+                    heroTitle: "Reduce AI Deployment Risk by <span class=\"gradient-text\">90%</span><br> with Professional Prompt Management",
+                    heroSubtitle: "PromptHub is the collaborative OS for AI teams. Version, test, and deploy reliable AI features with the speed and confidence of a professional software workflow.",
+                    heroEmailPlaceholder: "you@company.com",
+                    heroSubmitBtn: "Get Free Beta Access",
+                    heroSubtext: "No credit card required. Join developers from top AI companies.",
+                    successTitle: "Perfect! You're on the list.",
+                    successSubtitle: "We've sent you a welcome email. Check your inbox.",
+                    socialProofTitle: "Validated and discussed by the developer community",
+                    problemTitle: "Your AI Workflow is <span class=\"text-red-500\">Broken</span>.",
+                    problemSubtitle: "Last week, a 'small tweak' from a PM broke your support chatbot. It took 3 hours to find the original prompt in a Google Doc, and another 2 to fix the damage. Your team lost $15K in support tickets.",
+                    pain1Title: "Chaotic Prompts",
+                    pain1Desc: "Prompts are scattered across 15 different Google Docs. There's no single source of truth. The result: inconsistent AI behavior that confuses users.",
+                    pain2Title: "No Version Control",
+                    pain2Desc: "A PM makes a 'small change' and breaks a key feature. Rolling back means manually searching through document history for hours in a panic.",
+                    pain3Title: "Broken Collaboration",
+                    pain3Desc: "Non-technical experts can't contribute safely. Developers become a bottleneck for every copy change, slowing down innovation.",
+                    solutionTitle: "The Single Source of Truth for Your AI.",
+                    solutionSubtitle: "PromptHub brings the discipline of software engineering to your AI development lifecycle. See how it works in real-time:",
+                    progressBarLabel: "Live workflow demonstration",
+                    howTitle: "A Workflow That Just Works.",
+                    howSubtitle: "Go from idea to production-ready AI in three simple steps.",
+                    step1Title: "Organize & Centralize",
+                    step1Desc: "Bring all your prompts into one collaborative workspace. Structure them by project, add documentation, and say goodbye to chaos.",
+                    step2Title: "Collaborate & Test",
+                    step2Desc: "Invite your entire team. Test prompts against any model in a safe playground. Version every change with Git-like discipline.",
+                    step3Title: "Deploy with Confidence",
+                    step3Desc: "Integrate with your CI/CD pipeline. Monitor performance and roll back to a previous version instantly if something goes wrong.",
+                    finalCtaTitle: "Ready to Fix Your AI Workflow?",
+                    finalCtaSubtitle: "Join the private beta and be the first to experience a sane way of building with AI. Free for early adopters.",
+                    benefit1: "5-minute setup",
+                    benefit2: "Free during beta",
+                    benefit3: "Priority support",
+                    footerSubmitBtn: "Get Early Access",
+                    footerSubtext: "No credit card required. Cancel anytime.",
+                    footerSuccessTitle: "You're on the waitlist!",
+                    footerSuccessSubtitle: "We've added you. Keep an eye on your email for your invitation.",
+                    footerText: "© 2025 PromptHub. All rights reserved.",
+                    animMainTitle: "summarize_conversation.prompt",
+                    animMainSubtitle: "Manage, test, and version this prompt with your team",
+                    animTabEdit: "Edit",
+                    animTabPlayground: "Playground",
+                    animTabVersions: "Versions",
+                    animTabAnalytics: "Analytics",
+                    animTabDeployment: "Deployment",
+                    animEditorTitle: "Prompt Content",
+                    animSuggestionAuthor: "Marco suggests:",
+                    animSuggestionText: "\"Add length constraint to improve consistency\"",
+                    animPlaygroundSubtitle: "Testing changes in a safe environment",
+                    animPlaygroundTitle: "Configuration & Variables",
+                    animModelLabel: "Model",
+                    animRunBtn: "▶ Run Test",
+                    animOutputTitle: "Model Output",
+                    animOutputMeta: "✅ Latency: 1.2s | Tokens: 45 | Cost: $0.004",
+                    animAnalyticsSubtitle: "Real-time performance metrics",
+                    animMetric1Label: "Success Rate",
+                    animMetric2Label: "Avg. Latency",
+                    animMetric3Label: "Runs (7d)",
+                    animMetric4Label: "Cost (7d)",
+                    animActivityTitle: "Team Activity",
+                    animActivity1Desc: "Elena optimized length constraint",
+                    animActivity1Time: "5 minutes ago",
+                    animActivity2Desc: "Marco ran 47 tests",
+                    animActivity2Time: "2 hours ago",
+                    animDeploySubtitle: "Deployment and environment management",
+                    animEnvTitle: "Environment Status",
+                    animProdTitle: "Production",
+                    animProdDesc: "v3.2 - Deployed by Elena",
+                    animProdStatus: "Active",
+                    animIntegTitle: "Active Integrations",
+                    animApiStatus: "Active",
+                    animCiStatus: "Active",
+                    animPromptLine1: "You are an expert customer support assistant.",
+                    animPromptLine2: "Analyze the conversation from <span class=\"prompt-variable\">{{user_name}}</span> and generate a concise summary.",
+                    animPromptLine3: "Format the output in JSON.<span class=\"typing-cursor\"></span>",
+                    animVarLabel: "user_name:",
+                    animJsonSummary: "Elena is satisfied with the resolution...",
+                    animJsonSentiment: "Positive",
+                    animJsonTime: "5 minutes"
+                },
+                es: {
+                    headerCtaBtn: "Obtener Acceso Beta Gratis",
+                    heroBadge: "Beta Privada Activa",
+                    heroTitle: "Reduce el Riesgo de Despliegue de IA en <span class=\"gradient-text\">90%</span><br> con Gestión Profesional de Prompts",
+                    heroSubtitle: "PromptHub es el OS colaborativo para equipos de IA. Versiona, prueba y despliega funciones de IA confiables con la velocidad y confianza de un flujo de trabajo de software profesional.",
+                    heroEmailPlaceholder: "tu@empresa.com",
+                    heroSubmitBtn: "Acceso Beta Gratis",
+                    heroSubtext: "Sin tarjeta de crédito. Únete a desarrolladores de las mejores empresas de IA.",
+                    successTitle: "¡Perfecto! Estás en la lista.",
+                    successSubtitle: "Te hemos enviado un correo de bienvenida. Revisa tu bandeja de entrada.",
+                    socialProofTitle: "Validado y discutido por la comunidad de desarrolladores",
+                    problemTitle: "Tu Flujo de Trabajo de IA está <span class=\"text-red-500\">Roto</span>.",
+                    problemSubtitle: "La semana pasada, un \"pequeño ajuste\" de un PM rompió tu chatbot de soporte. Tardaste 3 horas en encontrar el prompt original en un Google Doc, y otras 2 horas en arreglar el daño. Tu equipo perdió $15K en tickets de soporte.",
+                    pain1Title: "Prompts Caóticos",
+                    pain1Desc: "Los prompts están dispersos en 15 Google Docs diferentes. No hay una única fuente de verdad. El resultado: comportamiento de IA inconsistente que confunde a los usuarios.",
+                    pain2Title: "Sin Control de Versiones",
+                    pain2Desc: "Un PM hace un \"pequeño cambio\" y rompe una función clave. Revertir significa buscar manualmente en el historial de documentos durante horas de pánico.",
+                    pain3Title: "Colaboración Rota",
+                    pain3Desc: "Los expertos no técnicos no pueden contribuir de forma segura. Los desarrolladores se convierten en cuello de botella para cada cambio de copy, ralentizando la innovación.",
+                    solutionTitle: "La Única Fuente de Verdad para tu IA.",
+                    solutionSubtitle: "PromptHub trae la disciplina de la ingeniería de software a tu ciclo de vida de desarrollo de IA. Ve cómo funciona en tiempo real:",
+                    progressBarLabel: "Demostración en vivo del flujo de trabajo",
+                    howTitle: "Un Flujo de Trabajo que Simplemente Funciona.",
+                    howSubtitle: "Pasa de la idea a una IA lista para producción en tres simples pasos.",
+                    step1Title: "Organiza y Centraliza",
+                    step1Desc: "Reúne todos tus prompts en un espacio de trabajo colaborativo. Estrúcturalos por proyecto, añade documentación y despídete del caos.",
+                    step2Title: "Colabora y Prueba",
+                    step2Desc: "Invita a todo tu equipo. Prueba prompts contra cualquier modelo en un playground seguro. Versiona cada cambio con disciplina tipo Git.",
+                    step3Title: "Despliega con Confianza",
+                    step3Desc: "Intégralo con tu pipeline de CI/CD. Monitorea el rendimiento y revierte a una versión anterior al instante si algo sale mal.",
+                    finalCtaTitle: "¿Listo para Arreglar tu Flujo de Trabajo de IA?",
+                    finalCtaSubtitle: "Únete a la beta privada y sé el primero en experimentar una forma sensata de construir con IA. Gratis para los primeros usuarios.",
+                    benefit1: "Setup en 5 minutos",
+                    benefit2: "Gratis durante la beta",
+                    benefit3: "Soporte prioritario",
+                    footerSubmitBtn: "Obtener Acceso Anticipado",
+                    footerSubtext: "Sin tarjeta de crédito. Cancela cuando quieras.",
+                    footerSuccessTitle: "¡Listo! Estás en la lista de espera.",
+                    footerSuccessSubtitle: "Te hemos añadido. Mantente atento a tu correo para recibir tu invitación.",
+                    footerText: "© 2025 PromptHub. Todos los derechos reservados.",
+                    animMainTitle: "resumir_conversacion.prompt",
+                    animMainSubtitle: "Gestiona, prueba y versiona este prompt con tu equipo",
+                    animTabEdit: "Editar",
+                    animTabPlayground: "Playground",
+                    animTabVersions: "Versiones",
+                    animTabAnalytics: "Analytics",
+                    animTabDeployment: "Despliegue",
+                    animEditorTitle: "Contenido del Prompt",
+                    animSuggestionAuthor: "Marco sugiere:",
+                    animSuggestionText: "\"Agregar restricción de longitud para mejorar consistencia\"",
+                    animPlaygroundSubtitle: "Probando cambios en ambiente seguro",
+                    animPlaygroundTitle: "Configuración y Variables",
+                    animModelLabel: "Modelo",
+                    animRunBtn: "▶ Ejecutar Prueba",
+                    animOutputTitle: "Salida del Modelo",
+                    animOutputMeta: "✅ Latencia: 1.2s | Tokens: 45 | Costo: $0.004",
+                    animAnalyticsSubtitle: "Métricas de rendimiento en tiempo real",
+                    animMetric1Label: "Tasa de Éxito",
+                    animMetric2Label: "Latencia Promedio",
+                    animMetric3Label: "Ejecuciones (7d)",
+                    animMetric4Label: "Costo (7d)",
+                    animActivityTitle: "Actividad del Equipo",
+                    animActivity1Desc: "Elena optimizó la restricción de longitud",
+                    animActivity1Time: "hace 5 minutos",
+                    animActivity2Desc: "Marco ejecutó 47 pruebas",
+                    animActivity2Time: "hace 2 horas",
+                    animDeploySubtitle: "Gestión de despliegues y ambientes",
+                    animEnvTitle: "Estado de Ambientes",
+                    animProdTitle: "Producción",
+                    animProdDesc: "v3.2 - Desplegado por Elena",
+                    animProdStatus: "Activo",
+                    animIntegTitle: "Integraciones Activas",
+                    animApiStatus: "Activo",
+                    animCiStatus: "Activo",
+                    animPromptLine1: "Eres un asistente de soporte al cliente experto.",
+                    animPromptLine2: "Analiza la conversación de <span class=\"prompt-variable\">{{user_name}}</span> y genera un resumen conciso.",
+                    animPromptLine3: "Formatea la salida en JSON.<span class=\"typing-cursor\"></span>",
+                    animVarLabel: "user_name:",
+                    animJsonSummary: "Elena está satisfecha...",
+                    animJsonSentiment: "Positivo",
+                    animJsonTime: "5 minutos"
+                }
+            };
+            
+            let currentLang = 'es';
+
+            const elements = {
+                headerCtaBtn: document.getElementById('header-cta-btn'),
+                heroBadge: document.getElementById('hero-badge'),
+                heroTitle: document.getElementById('hero-title'),
+                heroSubtitle: document.getElementById('hero-subtitle'),
+                heroEmailInput: document.getElementById('hero-email-input'),
+                heroSubmitBtn: document.getElementById('hero-submit-btn'),
+                heroSubtext: document.getElementById('hero-subtext'),
+                successTitleHero: document.getElementById('success-title-hero'),
+                successSubtitleHero: document.getElementById('success-subtitle-hero'),
+                socialProofTitle: document.getElementById('social-proof-title'),
+                problemTitle: document.getElementById('problem-title'),
+                problemSubtitle: document.getElementById('problem-subtitle'),
+                pain1Title: document.getElementById('pain1-title'),
+                pain1Desc: document.getElementById('pain1-desc'),
+                pain2Title: document.getElementById('pain2-title'),
+                pain2Desc: document.getElementById('pain2-desc'),
+                pain3Title: document.getElementById('pain3-title'),
+                pain3Desc: document.getElementById('pain3-desc'),
+                solutionTitle: document.getElementById('solution-title'),
+                solutionSubtitle: document.getElementById('solution-subtitle'),
+                progressBarLabel: document.getElementById('progress-bar-label'),
+                howTitle: document.getElementById('how-title'),
+                howSubtitle: document.getElementById('how-subtitle'),
+                step1Title: document.getElementById('step1-title'),
+                step1Desc: document.getElementById('step1-desc'),
+                step2Title: document.getElementById('step2-title'),
+                step2Desc: document.getElementById('step2-desc'),
+                step3Title: document.getElementById('step3-title'),
+                step3Desc: document.getElementById('step3-desc'),
+                finalCtaTitle: document.getElementById('final-cta-title'),
+                finalCtaSubtitle: document.getElementById('final-cta-subtitle'),
+                benefit1Text: document.getElementById('benefit1-text'),
+                benefit2Text: document.getElementById('benefit2-text'),
+                benefit3Text: document.getElementById('benefit3-text'),
+                footerEmailInput: document.getElementById('footer-email-input'),
+                footerSubmitBtn: document.getElementById('footer-submit-btn'),
+                footerSubtext: document.getElementById('footer-subtext'),
+                successTitleFooter: document.getElementById('success-title-footer'),
+                successSubtitleFooter: document.getElementById('success-subtitle-footer'),
+                footerText: document.getElementById('footer-text'),
+                // Animation elements
+                animMainTitle: document.querySelectorAll('.anim-main-title'),
+                animMainSubtitle: document.querySelectorAll('.anim-main-subtitle'),
+                animTabEdit: document.querySelectorAll('.anim-tab-edit'),
+                animTabPlayground: document.querySelectorAll('.anim-tab-playground'),
+                animTabVersions: document.querySelectorAll('.anim-tab-versions'),
+                animTabAnalytics: document.querySelectorAll('.anim-tab-analytics'),
+                animTabDeployment: document.querySelectorAll('.anim-tab-deployment'),
+                animEditorTitle: document.querySelector('.anim-editor-title'),
+                animSuggestionAuthor: document.querySelector('.anim-suggestion-author'),
+                animSuggestionText: document.querySelector('.anim-suggestion-text'),
+                animPlaygroundSubtitle: document.querySelector('.anim-playground-subtitle'),
+                animPlaygroundTitle: document.querySelector('.anim-playground-title'),
+                animModelLabel: document.querySelector('.anim-model-label'),
+                animRunBtn: document.querySelector('.anim-run-btn'),
+                animOutputTitle: document.querySelector('.anim-output-title'),
+                animOutputMeta: document.querySelector('.anim-output-meta'),
+                animAnalyticsSubtitle: document.querySelector('.anim-analytics-subtitle'),
+                animMetric1Label: document.querySelector('.anim-metric1-label'),
+                animMetric2Label: document.querySelector('.anim-metric2-label'),
+                animMetric3Label: document.querySelector('.anim-metric3-label'),
+                animMetric4Label: document.querySelector('.anim-metric4-label'),
+                animActivityTitle: document.querySelector('.anim-activity-title'),
+                animActivity1Desc: document.querySelector('.anim-activity1-desc'),
+                animActivity1Time: document.querySelector('.anim-activity1-time'),
+                animActivity2Desc: document.querySelector('.anim-activity2-desc'),
+                animActivity2Time: document.querySelector('.anim-activity2-time'),
+                animDeploySubtitle: document.querySelector('.anim-deploy-subtitle'),
+                animEnvTitle: document.querySelector('.anim-env-title'),
+                animProdTitle: document.querySelector('.anim-prod-title'),
+                animProdDesc: document.querySelector('.anim-prod-desc'),
+                animProdStatus: document.querySelector('.anim-prod-status'),
+                animIntegTitle: document.querySelector('.anim-integ-title'),
+                animApiStatus: document.querySelector('.anim-api-status'),
+                animCiStatus: document.querySelector('.anim-ci-status'),
+                animPromptLine1: document.querySelector('.anim-prompt-line1'),
+                animPromptLine2: document.querySelector('.anim-prompt-line2'),
+                animPromptLine3: document.querySelector('.anim-prompt-line3'),
+                animVarLabel: document.querySelector('.anim-var-label'),
+                animJsonValue1: document.querySelector('.anim-json-value1'),
+                animJsonValue2: document.querySelector('.anim-json-value2'),
+                animJsonValue3: document.querySelector('.anim-json-value3'),
+                animJsonKey1: document.querySelector('.anim-json-key1'),
+                animJsonKey2: document.querySelector('.anim-json-key2'),
+                animJsonKey3: document.querySelector('.anim-json-key3'),
+            };
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                document.documentElement.lang = lang;
+                const t = i18n[lang];
+
+                document.title = t.title;
+                
+                // Update all text content
+                Object.keys(elements).forEach(key => {
+                    const el = elements[key];
+                    if (el) {
+                        if (el.nodeName === 'INPUT') {
+                            el.placeholder = t[key] || '';
+                        } else if (el.nodeName === 'P' || el.nodeName === 'SPAN' || el.nodeName === 'BUTTON' || el.nodeName === 'DIV' || el.nodeName === 'H1' || el.nodeName === 'H2' || el.nodeName === 'H3' || el.nodeName === 'A' || el.nodeName === 'LABEL') {
+                            if (t[key]) {
+                                if (key.includes('Title') || key.includes('Subtitle') || key.includes('PromptLine')) {
+                                    el.innerHTML = t[key];
+                                } else {
+                                    el.textContent = t[key];
+                                }
+                            }
+                        } else if (el.forEach) { // Handle NodeList
+                            el.forEach(node => {
+                                if (t[key]) node.textContent = t[key];
+                            });
+                        }
+                    }
+                });
+                
+                // Update specific parts of the animation
+                if(t.animJsonSummary) elements.animJsonValue1.textContent = `"${t.animJsonSummary}"`;
+                if(t.animJsonSentiment) elements.animJsonValue2.textContent = `"${t.animJsonSentiment}"`;
+                if(t.animJsonTime) elements.animJsonValue3.textContent = `"${t.animJsonTime}"`;
+                if(elements.animJsonKey1) elements.animJsonKey1.textContent = lang === 'es' ? '"resumen"' : '"summary"';
+                if(elements.animJsonKey2) elements.animJsonKey2.textContent = lang === 'es' ? '"sentimiento"' : '"sentiment"';
+                if(elements.animJsonKey3) elements.animJsonKey3.textContent = lang === 'es' ? '"tiempo_resolucion"' : '"resolution_time"';
+
+                // Update toggle state
+                document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+                document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+            }
+
+            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+            document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
+
+            // Set initial language
+            setLanguage('es');
+        });
+    </script>
+</body>
+</html>
